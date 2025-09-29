@@ -4,10 +4,10 @@ GO
 
 
 USE db_gestao_contas;
-GO*/
+GO
+*/
 
-
-
+/*
 CREATE TABLE tb_pessoa ( 
     idPessoa BIGINT IDENTITY(1,1) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -39,8 +39,11 @@ CREATE TABLE tb_transacao (
     CONSTRAINT FK_Transacoes_Contas FOREIGN KEY (idConta) REFERENCES tb_conta(idConta) 
 );
 GO
+*/
 
-
+DELETE FROM tb_transacao;
+DELETE FROM tb_conta;
+DELETE FROM tb_pessoa;
 
 INSERT INTO tb_pessoa (nome, cpf, dataNascimento) 
 VALUES ('João da Silva', '12345678901', '1990-05-15');

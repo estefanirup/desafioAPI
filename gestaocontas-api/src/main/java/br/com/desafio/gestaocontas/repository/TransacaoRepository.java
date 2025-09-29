@@ -1,6 +1,8 @@
 package br.com.desafio.gestaocontas.repository;
 
+import br.com.desafio.gestaocontas.dto.RelatorioTopClientesDTO;
 import br.com.desafio.gestaocontas.model.Transacao;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,10 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
     @Query("SELECT SUM(t.valor * -1) FROM Transacao t WHERE t.conta.idConta = :idConta AND t.valor < 0 AND t.dataTransacao BETWEEN :inicio AND :fim")
     BigDecimal sumSaquesByContaAndData(@Param("idConta") Long idConta, @Param("inicio") OffsetDateTime inicio, @Param("fim") OffsetDateTime fim);
+
+    @Query("SELECT new br.com.desafio.gestaocontas.dto.RelatorioTopClientesDTO(p.idPessoa, p.nome, SUM(ABS(t.valor))) " +
+           "FROM Transacao t JOIN t.conta c JOIN c.pessoa p " +
+           "GROUP BY p.idPessoa, p.nome " +
+           "ORDER BY SUM(ABS(t.valor)) DESC")
+    List<RelatorioTopClientesDTO> findTopClientesPorVolume(Pageable pageable);
 }
