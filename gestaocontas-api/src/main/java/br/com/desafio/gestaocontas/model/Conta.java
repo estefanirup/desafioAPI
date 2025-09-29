@@ -12,24 +12,25 @@ public class Conta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idConta")
     private Long idConta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPessoa", nullable = false)
     private Pessoa pessoa;
 
-    @Column(nullable = false, columnDefinition = "DECIMAL(18, 2)")
+    @Column(name = "saldo", nullable = false, columnDefinition = "DECIMAL(18, 2)")
     private BigDecimal saldo;
 
-    @Column(nullable = false, columnDefinition = "DECIMAL(18, 2)")
+    @Column(name = "limiteSaqueDiario", nullable = false, columnDefinition = "DECIMAL(18, 2)")
     private BigDecimal limiteSaqueDiario;
 
-    @Column(nullable = false)
+    @Column(name = "flagAtivo", nullable = false)
     private Boolean flagAtivo;
 
-    @Column(nullable = false)
+    @Column(name = "tipoConta", nullable = false)
     private Integer tipoConta;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "dataCriacao", nullable = false, updatable = false)
     private OffsetDateTime dataCriacao;
 }

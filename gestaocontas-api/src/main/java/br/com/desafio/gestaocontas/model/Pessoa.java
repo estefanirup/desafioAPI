@@ -11,14 +11,15 @@ public class Pessoa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idPessoa")
     private Long idPessoa;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "nome", nullable = false, length = 255)
     private String nome;
 
-    @Column(nullable = false, unique = true, length = 11)
+    @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(nullable = false)
+    @Column(name = "dataNascimento", nullable = false)
     private LocalDate dataNascimento;
 }

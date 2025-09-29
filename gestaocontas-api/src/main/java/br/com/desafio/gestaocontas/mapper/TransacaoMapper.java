@@ -6,9 +6,10 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring") 
 public interface TransacaoMapper {
 
     TransacaoResponseDTO toResponseDTO(Transacao transacao);
+
     List<TransacaoResponseDTO> toResponseDTOList(List<Transacao> transacoes);
 }
