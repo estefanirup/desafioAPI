@@ -11,7 +11,7 @@ public class Pessoa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idPessoa")
+    @Column(name = "id_pessoa")
     private Long idPessoa;
 
     @Column(name = "nome", nullable = false, length = 255)
@@ -20,6 +20,6 @@ public class Pessoa {
     @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(name = "dataNascimento", nullable = false)
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 }

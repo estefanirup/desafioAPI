@@ -12,16 +12,16 @@ public class Transacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idTransacao")
+    @Column(name = "id_transacao")
     private Long idTransacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idConta", nullable = false)
+    @JoinColumn(name = "id_conta", nullable = false)
     private Conta conta;
 
     @Column(name = "valor", nullable = false, columnDefinition = "DECIMAL(18, 2)")
     private BigDecimal valor;
 
-    @Column(name = "dataTransacao", nullable = false, updatable = false)
+    @Column(name = "data_transacao", nullable = false, updatable = false)
     private OffsetDateTime dataTransacao;
 }
