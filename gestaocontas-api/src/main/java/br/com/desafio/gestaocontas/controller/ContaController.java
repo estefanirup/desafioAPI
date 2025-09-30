@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/contas")
+@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Contas", description = "Endpoints para gerenciamento de contas bancárias")
 public class ContaController {
 
