@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -31,8 +32,8 @@ public class ContaServiceImpl implements ContaService {
     private final TransacaoMapper transacaoMapper;
 
     public ContaServiceImpl(ContaRepository contaRepository, PessoaRepository pessoaRepository,
-                            TransacaoRepository transacaoRepository, ContaMapper contaMapper,
-                            TransacaoMapper transacaoMapper) {
+            TransacaoRepository transacaoRepository, ContaMapper contaMapper,
+            TransacaoMapper transacaoMapper) {
         this.contaRepository = contaRepository;
         this.pessoaRepository = pessoaRepository;
         this.transacaoRepository = transacaoRepository;
@@ -44,7 +45,8 @@ public class ContaServiceImpl implements ContaService {
     @Transactional
     public ContaResponseDTO criarConta(ContaRequestDTO contaRequestDTO) {
         Pessoa pessoa = pessoaRepository.findById(contaRequestDTO.getIdPessoa())
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa com ID " + contaRequestDTO.getIdPessoa() + " não encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Pessoa com ID " + contaRequestDTO.getIdPessoa() + " não encontrada."));
 
         Conta novaConta = new Conta();
         novaConta.setPessoa(pessoa);
@@ -97,7 +99,8 @@ public class ContaServiceImpl implements ContaService {
             throw new IllegalOperationException("Saldo insuficiente para realizar o saque.");
         }
 
-        BigDecimal totalSacadoHoje = transacaoRepository.sumSaquesByContaAndData(idConta, getInicioDoDia(), getFimDoDia());
+        BigDecimal totalSacadoHoje = transacaoRepository.sumSaquesByContaAndData(idConta, getInicioDoDia(),
+                getFimDoDia());
         if (totalSacadoHoje == null) {
             totalSacadoHoje = BigDecimal.ZERO;
         }
@@ -147,5 +150,40 @@ public class ContaServiceImpl implements ContaService {
 
     private OffsetDateTime getFimDoDia() {
         return OffsetDateTime.of(LocalDate.now(), LocalTime.MAX, ZoneOffset.UTC);
+    }
+
+    @Override
+    @Transactional
+    public void transferir(Long idContaOrigem, TransferenciaRequestDTO transferenciaDTO) {
+        Long idContaDestino = transferenciaDTO.getIdContaDestino();
+        BigDecimal valor = transferenciaDTO.getValor();
+
+        if (idContaOrigem.equals(idContaDestino)) {
+            throw new IllegalOperationException("A conta de origem não pode ser a mesma que a de destino.");
+        }
+
+        Conta contaOrigem = findContaById(idContaOrigem);
+        Conta contaDestino = findContaById(idContaDestino);
+
+        if (!contaOrigem.getFlagAtivo() || !contaDestino.getFlagAtivo()) {
+            throw new IllegalOperationException(
+                    "Ambas as contas (origem e destino) devem estar ativas para realizar a transferência.");
+        }
+        if (contaOrigem.getSaldo().compareTo(valor) < 0) {
+            throw new IllegalOperationException("Saldo insuficiente na conta de origem para realizar a transferência.");
+        }
+
+        contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
+
+        contaRepository.saveAll(Arrays.asList(contaOrigem, contaDestino));
+
+        registrarTransacao(contaOrigem, valor.negate());
+        registrarTransacao(contaDestino, valor);
+    }
+
+    private Conta findContaById(Long idConta) {
+        return contaRepository.findById(idConta)
+                .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + idConta + " não encontrada."));
     }
 }

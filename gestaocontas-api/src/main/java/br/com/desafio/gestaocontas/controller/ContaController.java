@@ -94,4 +94,20 @@ public class ContaController {
         List<TransacaoResponseDTO> extrato = contaService.extrato(idConta);
         return ResponseEntity.ok(extrato);
     }
+
+    @PostMapping("/{idContaOrigem}/transferencia")
+    @Operation(summary = "Realiza uma transferência entre contas",
+               description = "Transfere um valor de uma conta de origem para uma conta de destino. A operação é atómica.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Transferência realizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Operação inválida (ex: saldo insuficiente, contas inativas)"),
+            @ApiResponse(responseCode = "404", description = "Conta de origem ou destino não encontrada")
+    })
+    public ResponseEntity<Void> transferir(
+            @PathVariable Long idContaOrigem,
+            @Valid @RequestBody TransferenciaRequestDTO transferenciaDTO) {
+        
+        contaService.transferir(idContaOrigem, transferenciaDTO);
+        return ResponseEntity.noContent().build();
+    }
 }
