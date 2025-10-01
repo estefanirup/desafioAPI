@@ -1,19 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
 import ListaPessoas from './pages/ListaPessoas';
-import DetalhesCliente from './pages/DetalhesCliente'; 
-import { CssBaseline, Container } from '@mui/material';
+import DetalhesCliente from './pages/DetalhesCliente';
 
 function App() {
   return (
     <Router>
-      <CssBaseline />
-      <Container>
-        <Routes>
+      <Routes>
+        <Route element={<Layout />}>
           <Route path="/" element={<ListaPessoas />} />
           <Route path="/clientes/:id" element={<DetalhesCliente />} />
-        </Routes>
-      </Container>
+        </Route>
+      </Routes>
     </Router>
   );
 }
