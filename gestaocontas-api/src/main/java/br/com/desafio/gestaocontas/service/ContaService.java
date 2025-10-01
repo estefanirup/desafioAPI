@@ -14,7 +14,7 @@ public interface ContaService {
 
     ContaResponseDTO sacar(Long idConta, TransacaoRequestDTO transacaoRequestDTO);
 
-    ContaResponseDTO bloquearConta(Long idConta);
+    ContaResponseDTO alterarStatusConta(Long idConta);
 
     void transferir(Long idContaOrigem, TransferenciaRequestDTO transferenciaDTO);
 

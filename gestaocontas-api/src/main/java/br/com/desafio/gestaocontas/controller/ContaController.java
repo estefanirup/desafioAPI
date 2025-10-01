@@ -74,15 +74,16 @@ public class ContaController {
         return ResponseEntity.ok(contaAtualizada);
     }
 
-    @Operation(summary = "Bloqueia uma conta", description = "Altera o status de uma conta para inativo, impedindo transações futuras.")
+    @Operation(summary = "Altera o status de uma conta (ativa/bloqueada)",
+               description = "Alterna o status de uma conta. Se estiver ativa, torna-se bloqueada, e vice-versa.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conta bloqueada com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Status da conta alterado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Conta não encontrada")
     })
-    @PatchMapping("/{idConta}/bloquear")
-    public ResponseEntity<ContaResponseDTO> bloquearConta(@PathVariable Long idConta) {
-        ContaResponseDTO contaBloqueada = contaService.bloquearConta(idConta);
-        return ResponseEntity.ok(contaBloqueada);
+    @PatchMapping("/{idConta}/alterar-status")
+    public ResponseEntity<ContaResponseDTO> alterarStatusConta(@PathVariable Long idConta) {
+        ContaResponseDTO contaAtualizada = contaService.alterarStatusConta(idConta);
+        return ResponseEntity.ok(contaAtualizada);
     }
 
     @Operation(summary = "Consulta o extrato de transações", description = "Retorna uma lista de todas as transações (depósitos e saques) realizadas em uma conta.")

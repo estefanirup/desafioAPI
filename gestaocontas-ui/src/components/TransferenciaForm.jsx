@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { createPessoa } from '../api/apiService';
 import {
     TextField,
     Button,
@@ -9,14 +8,10 @@ import {
     Alert
 } from '@mui/material';
 
-// Este formulário recebe duas funções como props:
-// - onSuccess: para ser chamada quando a pessoa for criada com sucesso.
-// - onCancel: para fechar o formulário.
-function CriarPessoaForm({ onSuccess, onCancel }) {
+function TransferenciaForm({ onSubmit, onCancel }) {
     const [formData, setFormData] = useState({
-        nome: '',
-        cpf: '',
-        dataNascimento: '',
+        idContaDestino: '',
+        valor: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -30,17 +25,18 @@ function CriarPessoaForm({ onSuccess, onCancel }) {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Impede o recarregamento da página
+        event.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
-            await createPessoa(formData);
-            onSuccess(); // Chama a função de sucesso passada pelo componente pai
+            await onSubmit({
+                idContaDestino: parseInt(formData.idContaDestino, 10),
+                valor: parseFloat(formData.valor)
+            });
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Erro ao criar a pessoa. Verifique os dados e tente novamente.';
+            const errorMsg = err.response?.data?.message || `Erro ao realizar a transferência.`;
             setError(errorMsg);
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -49,7 +45,7 @@ function CriarPessoaForm({ onSuccess, onCancel }) {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" gutterBottom>
-                Adicionar Novo Cliente
+                Realizar Transferência
             </Typography>
             
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -58,38 +54,27 @@ function CriarPessoaForm({ onSuccess, onCancel }) {
                 margin="normal"
                 required
                 fullWidth
-                id="nome"
-                label="Nome Completo"
-                name="nome"
-                autoComplete="name"
+                id="idContaDestino"
+                label="ID da Conta de Destino"
+                name="idContaDestino"
+                type="number"
                 autoFocus
-                value={formData.nome}
+                value={formData.idContaDestino}
                 onChange={handleChange}
             />
             <TextField
                 margin="normal"
                 required
                 fullWidth
-                id="cpf"
-                label="CPF (apenas números)"
-                name="cpf"
-                value={formData.cpf}
+                id="valor"
+                label="Valor (R$)"
+                name="valor"
+                type="number"
+                value={formData.valor}
                 onChange={handleChange}
+                inputProps={{ step: "0.01", min: "0.01" }}
             />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="dataNascimento"
-                label="Data de Nascimento"
-                name="dataNascimento"
-                type="date"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-                value={formData.dataNascimento}
-                onChange={handleChange}
-            />
+            
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                 <Button onClick={onCancel} color="secondary">
                     Cancelar
@@ -97,14 +82,14 @@ function CriarPessoaForm({ onSuccess, onCancel }) {
                 <Button
                     type="submit"
                     variant="contained"
-                    disabled={loading}
+                    disabled={loading || !formData.idContaDestino || !formData.valor}
                     startIcon={loading ? <CircularProgress size={20} /> : null}
                 >
-                    {loading ? 'Gardando informações...' : 'Guardar'}
+                    {loading ? 'Transferindo...' : 'Confirmar'}
                 </Button>
             </Box>
         </Box>
     );
 }
 
-export default CriarPessoaForm;
+export default TransferenciaForm;

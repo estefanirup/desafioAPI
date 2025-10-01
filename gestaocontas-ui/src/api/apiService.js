@@ -14,3 +14,8 @@ export const createPessoa = (pessoaData) => apiClient.post('/pessoas', pessoaDat
 
 // Funções para Contas
 export const getContasPorPessoa = (idPessoa) => apiClient.get(`/contas/pessoa/${idPessoa}`);
+export const depositarEmConta = (idConta, valor) => apiClient.post(`/contas/${idConta}/deposito`, { valor });
+export const sacarDeConta = (idConta, valor) => apiClient.post(`/contas/${idConta}/saque`, { valor });
+export const transferirEntreContas = (idContaOrigem, idContaDestino, valor) => 
+    apiClient.post(`/contas/${idContaOrigem}/transferencia`, { idContaDestino, valor });
+export const alterarStatusConta = (idConta) => apiClient.patch(`/contas/${idConta}/alterar-status`);

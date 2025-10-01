@@ -119,11 +119,11 @@ public class ContaServiceImpl implements ContaService {
 
     @Override
     @Transactional
-    public ContaResponseDTO bloquearConta(Long idConta) {
+    public ContaResponseDTO alterarStatusConta(Long idConta) {
         Conta conta = contaRepository.findById(idConta)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + idConta + " não encontrada."));
+        conta.setFlagAtivo(!conta.getFlagAtivo());
 
-        conta.setFlagAtivo(false);
         Conta contaAtualizada = contaRepository.save(conta);
         return contaMapper.toResponseDTO(contaAtualizada);
     }
