@@ -5,11 +5,13 @@ import {
     getContasPorPessoa,
     depositarEmConta,
     sacarDeConta,
-    transferirEntreContas, 
-    alterarStatusConta 
+    transferirEntreContas,
+    alterarStatusConta,
+    criarConta
 } from '../api/apiService';
 import TransacaoForm from '../components/TransacaoForm';
 import TransferenciaForm from '../components/TransferenciaForm';
+import CriarContaForm from '../components/CriarContaForm';
 import {
     Box, Typography, CircularProgress, Alert, Paper,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button,
@@ -28,6 +30,7 @@ function DetalhesCliente() {
     const [transacaoModal, setTransacaoModal] = useState({ open: false, type: '', contaId: null });
     const [transferenciaModal, setTransferenciaModal] = useState({ open: false, contaOrigemId: null });
     const [bloqueioModal, setBloqueioModal] = useState({ open: false, conta: null });
+    const [criarContaModal, setCriarContaModal] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
@@ -93,6 +96,22 @@ function DetalhesCliente() {
         }
     };
 
+    const handleOpenCriarContaModal = () => setCriarContaModal(true);
+    const handleCloseCriarContaModal = () => setCriarContaModal(false);
+    const handleSubmitCriarConta = async (formData) => {
+        try {
+            const contaData = { ...formData, idPessoa: id };
+            await criarConta(contaData);
+            handleCloseCriarContaModal();
+            setSnackbar({ open: true, message: 'Nova conta criada com sucesso!', severity: 'success' });
+            fetchData();
+        } catch (err) {
+            console.error('Falha ao criar conta:', err);
+            throw err;
+        }
+    };
+
+
 
     if (loading) {
         return (
@@ -113,49 +132,96 @@ function DetalhesCliente() {
 
     return (
         <Box sx={{ padding: 3 }}>
+            <Button component={RouterLink} to="/" sx={{ mb: 2 }}>
+                &larr; Voltar para a Lista de Clientes
+            </Button>
 
-            <Typography variant="h5" component="h2" gutterBottom>
-                Contas Bancárias
+            <Typography variant="h4" component="h1" gutterBottom>
+                Painel do Cliente
             </Typography>
+
+            {/* Secção de Informações do Cliente */}
+            <Paper sx={{ p: 2, mb: 3, backgroundColor: '#f9f9f9' }}>
+                <Typography variant="h6">{cliente.nome}</Typography>
+                <Typography><strong>CPF:</strong> {cliente.cpf}</Typography>
+                <Typography><strong>Data de Nascimento:</strong> {new Date(cliente.dataNascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Typography>
+            </Paper>
+
+            {/* Cabeçalho da secção de Contas com o novo botão */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h5" component="h2">
+                    Contas Bancárias
+                </Typography>
+                <Button variant="contained" onClick={handleOpenCriarContaModal}>
+                    Adicionar Nova Conta
+                </Button>
+            </Box>
+
+            {/* Tabela que lista as contas existentes */}
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Tipo</TableCell>
-                            <TableCell align="right">Saldo</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell align="center">Ações</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Tipo</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }} align="right">Saldo</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }} align="center">Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {contas.map((conta) => (
-                            <TableRow key={conta.idConta}>
-                                <TableCell>{conta.idConta}</TableCell>
-                                <TableCell>{conta.tipoConta === 1 ? 'Corrente' : 'Poupança'}</TableCell>
-                                <TableCell align="right">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(conta.saldo)}</TableCell>
-                                <TableCell>{conta.flagAtivo ? 'Ativa' : 'Bloqueada'}</TableCell>
-                                <TableCell align="center">
-                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} justifyContent="center">
-                                        <Button size="small" variant="outlined" onClick={() => handleOpenTransacaoModal('deposito', conta.idConta)}>Depositar</Button>
-                                        <Button size="small" variant="outlined" color="secondary" onClick={() => handleOpenTransacaoModal('saque', conta.idConta)}>Sacar</Button>
-                                        <Button size="small" variant="outlined" color="primary" onClick={() => handleOpenTransferenciaModal(conta.idConta)}>Transferir</Button>
-                                        <Button size="small" variant="contained" color={conta.flagAtivo ? "warning" : "success"} onClick={() => handleOpenBloqueioModal(conta)}>
-                                            {conta.flagAtivo ? 'Bloquear' : 'Reativar'}
-                                        </Button>
-                                    </Stack>
-                                </TableCell>
+                        {contas.length > 0 ? (
+                            contas.map((conta) => (
+                                <TableRow key={conta.idConta}>
+                                    <TableCell>{conta.idConta}</TableCell>
+                                    <TableCell>{conta.tipoConta === 1 ? 'Corrente' : 'Poupança'}</TableCell>
+                                    <TableCell align="right">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(conta.saldo)}</TableCell>
+                                    <TableCell>
+                                        <Typography color={conta.flagAtivo ? 'green' : 'red'}>
+                                            {conta.flagAtivo ? 'Ativa' : 'Bloqueada'}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} justifyContent="center">
+                                            <Button size="small" variant="outlined" onClick={() => handleOpenTransacaoModal('deposito', conta.idConta)} disabled={!conta.flagAtivo}>Depositar</Button>
+                                            <Button size="small" variant="outlined" color="secondary" onClick={() => handleOpenTransacaoModal('saque', conta.idConta)} disabled={!conta.flagAtivo}>Sacar</Button>
+                                            <Button size="small" variant="outlined" color="primary" onClick={() => handleOpenTransferenciaModal(conta.idConta)} disabled={!conta.flagAtivo}>Transferir</Button>
+                                            <Button size="small" variant="contained" color={conta.flagAtivo ? "warning" : "success"} onClick={() => handleOpenBloqueioModal(conta)}>
+                                                {conta.flagAtivo ? 'Bloquear' : 'Reativar'}
+                                            </Button>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={5} align="center">Este cliente ainda não possui contas.</TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>
 
             {/* Modal de Depósito/Saque */}
-            <Dialog open={transacaoModal.open} onClose={handleCloseTransacaoModal}><DialogContent><TransacaoForm title={transacaoModal.type === 'deposito' ? 'Realizar Depósito' : 'Realizar Saque'} onSubmit={handleSubmitTransacao} onCancel={handleCloseTransacaoModal} /></DialogContent></Dialog>
+            <Dialog open={transacaoModal.open} onClose={handleCloseTransacaoModal}>
+                <DialogContent>
+                    <TransacaoForm
+                        title={transacaoModal.type === 'deposito' ? 'Realizar Depósito' : 'Realizar Saque'}
+                        onSubmit={handleSubmitTransacao}
+                        onCancel={handleCloseTransacaoModal}
+                    />
+                </DialogContent>
+            </Dialog>
 
             {/* Modal de Transferência */}
-            <Dialog open={transferenciaModal.open} onClose={handleCloseTransferenciaModal}><DialogContent><TransferenciaForm onSubmit={handleSubmitTransferencia} onCancel={handleCloseTransferenciaModal} /></DialogContent></Dialog>
+            <Dialog open={transferenciaModal.open} onClose={handleCloseTransferenciaModal}>
+                <DialogContent>
+                    <TransferenciaForm
+                        onSubmit={handleSubmitTransferencia}
+                        onCancel={handleCloseTransferenciaModal}
+                    />
+                </DialogContent>
+            </Dialog>
 
             {/* Modal de Confirmação de Bloqueio */}
             <Dialog open={bloqueioModal.open} onClose={handleCloseBloqueioModal}>
@@ -171,7 +237,22 @@ function DetalhesCliente() {
                 </DialogActions>
             </Dialog>
 
-            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}><Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>{snackbar.message}</Alert></Snackbar>
+            {/* Modal para Criar Conta */}
+            <Dialog open={criarContaModal} onClose={handleCloseCriarContaModal}>
+                <DialogContent>
+                    <CriarContaForm
+                        onSubmit={handleSubmitCriarConta}
+                        onCancel={handleCloseCriarContaModal}
+                    />
+                </DialogContent>
+            </Dialog>
+
+            {/* Notificação para feedback ao utilizador */}
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

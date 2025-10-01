@@ -19,3 +19,4 @@ export const sacarDeConta = (idConta, valor) => apiClient.post(`/contas/${idCont
 export const transferirEntreContas = (idContaOrigem, idContaDestino, valor) => 
     apiClient.post(`/contas/${idContaOrigem}/transferencia`, { idContaDestino, valor });
 export const alterarStatusConta = (idConta) => apiClient.patch(`/contas/${idConta}/alterar-status`);
+export const criarConta = (contaData) => apiClient.post('/contas', contaData);
