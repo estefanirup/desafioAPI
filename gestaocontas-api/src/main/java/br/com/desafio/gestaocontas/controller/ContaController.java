@@ -97,8 +97,7 @@ public class ContaController {
     }
 
     @PostMapping("/{idContaOrigem}/transferencia")
-    @Operation(summary = "Realiza uma transferência entre contas",
-               description = "Transfere um valor de uma conta de origem para uma conta de destino. A operação é atómica.")
+    @Operation(summary = "Realiza uma transferência entre contas", description = "Transfere um valor de uma conta de origem para uma conta de destino. A operação é atómica.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Transferência realizada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Operação inválida (ex: saldo insuficiente, contas inativas)"),
@@ -107,8 +106,19 @@ public class ContaController {
     public ResponseEntity<Void> transferir(
             @PathVariable Long idContaOrigem,
             @Valid @RequestBody TransferenciaRequestDTO transferenciaDTO) {
-        
+
         contaService.transferir(idContaOrigem, transferenciaDTO);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/pessoa/{idPessoa}")
+    @Operation(summary = "Busca todas as contas de uma pessoa")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Contas listadas com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Pessoa não encontrada")
+    })
+    public ResponseEntity<List<ContaResponseDTO>> buscarContasPorPessoa(@PathVariable Long idPessoa) {
+        List<ContaResponseDTO> contas = contaService.buscarContasPorPessoa(idPessoa);
+        return ResponseEntity.ok(contas);
     }
 }

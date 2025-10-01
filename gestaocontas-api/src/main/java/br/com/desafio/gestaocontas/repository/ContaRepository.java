@@ -3,6 +3,7 @@ package br.com.desafio.gestaocontas.repository;
 import br.com.desafio.gestaocontas.model.Conta;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,7 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
     BigDecimal findSaldoMedioContasAtivas();
 
     boolean existsByPessoaIdPessoa(Long idPessoa);
+
+    @Query("SELECT c FROM Conta c WHERE c.pessoa.idPessoa = :idPessoa")
+    List<Conta> findByPessoaIdPessoa(Long idPessoa);
 }

@@ -19,4 +19,6 @@ public interface ContaService {
     void transferir(Long idContaOrigem, TransferenciaRequestDTO transferenciaDTO);
 
     List<TransacaoResponseDTO> extrato(Long idConta);
+
+    List<ContaResponseDTO> buscarContasPorPessoa(Long idPessoa);
 }

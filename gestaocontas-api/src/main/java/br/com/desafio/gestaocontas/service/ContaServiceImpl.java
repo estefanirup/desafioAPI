@@ -21,6 +21,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContaServiceImpl implements ContaService {
@@ -185,5 +186,16 @@ public class ContaServiceImpl implements ContaService {
     private Conta findContaById(Long idConta) {
         return contaRepository.findById(idConta)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + idConta + " não encontrada."));
+    }
+
+    @Override
+    public List<ContaResponseDTO> buscarContasPorPessoa(Long idPessoa) {
+        if (!pessoaRepository.existsById(idPessoa)) {
+            throw new ResourceNotFoundException("Pessoa com ID " + idPessoa + " não encontrada.");
+        }
+        List<Conta> contas = contaRepository.findByPessoaIdPessoa(idPessoa);
+        return contas.stream()
+                .map(contaMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 }

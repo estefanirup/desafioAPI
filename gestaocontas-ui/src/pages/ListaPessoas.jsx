@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getPessoas } from '../api/apiService';
 import CriarPessoaForm from '../components/CriarPessoaForm';
+import { Link as RouterLink } from 'react-router-dom'; 
 import {
     Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Paper, Typography, Box, CircularProgress,
-    Button, Dialog, DialogContent, Snackbar, Alert
+    Button, Dialog, DialogContent, Snackbar, Alert,
+    Link 
 } from '@mui/material';
 
 function ListaPessoas() {
@@ -22,7 +24,7 @@ function ListaPessoas() {
             const response = await getPessoas();
             setPessoas(response.data);
         } catch (err) {
-            setError('Falha ao carregar os dados das pessoas. Verifique se a API está a correr.');
+            setError('Falha ao carregar os dados das pessoas. A API está rodando?');
             console.error(err);
         } finally {
             setLoading(false);
@@ -88,7 +90,13 @@ function ListaPessoas() {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">{pessoa.idPessoa}</TableCell>
-                                <TableCell>{pessoa.nome}</TableCell>
+                                
+                                <TableCell>
+                                    <Link component={RouterLink} to={`/clientes/${pessoa.idPessoa}`} underline="hover">
+                                        {pessoa.nome}
+                                    </Link>
+                                </TableCell>
+
                                 <TableCell>{pessoa.cpf}</TableCell>
                                 <TableCell>{new Date(pessoa.dataNascimento).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</TableCell>
                             </TableRow>
