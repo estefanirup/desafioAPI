@@ -13,29 +13,35 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/contas")
-@CrossOrigin(origins = "http://localhost:5173")
-@Tag(name = "Contas", description = "Endpoints para gerenciamento de contas bancárias")
+@RestController // Retorna JSON
+@RequestMapping("/contas") // Todos os endpoints começam com /contas  
+@CrossOrigin(origins = "http://localhost:5173") // Permite requisições do frontend nesse endereço
+// Falar sobre o problema com o CORS
+@Tag(name = "Contas", description = "Endpoints para gerenciamento de contas bancárias") // Swagger bonitinho
 public class ContaController {
 
     private final ContaService contaService;
 
     public ContaController(ContaService contaService) {
         this.contaService = contaService;
-    }
+    } // Aqui poderia ter usado @Autowired que o Spring injeta automatico 
 
-    @Operation(summary = "Cria uma nova conta", description = "Cria uma nova conta associada a um ID de pessoa existente.")
-    @ApiResponses(value = {
+
+    @Operation(summary = "Cria uma nova conta", description = "Cria uma nova conta associada a um ID de pessoa existente.") 
+    @ApiResponses(value = { 
             @ApiResponse(responseCode = "201", description = "Conta criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos"),
             @ApiResponse(responseCode = "404", description = "Pessoa não encontrada com o ID informado")
     })
-    @PostMapping
+    // Endpoint POST /contas 
+    @PostMapping 
+    // Corpo da requisição é um JSON que será mapeado para ContaRequestDTO
+    // @Valid ativa a validação dos campos anotados em ContaRequestDTO
+    // ResponseEntity permite customizar o status HTTP da resposta
     public ResponseEntity<ContaResponseDTO> criarConta(@Valid @RequestBody ContaRequestDTO contaRequestDTO) {
         ContaResponseDTO novaConta = contaService.criarConta(contaRequestDTO);
         return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
-    }
+    } 
 
     @Operation(summary = "Consulta o saldo de uma conta", description = "Retorna o saldo atual de uma conta específica.")
     @ApiResponses(value = {
@@ -43,6 +49,7 @@ public class ContaController {
             @ApiResponse(responseCode = "404", description = "Conta não encontrada")
     })
     @GetMapping("/{idConta}/saldo")
+    // @PathVariable extrai o idConta da URL
     public ResponseEntity<SaldoDTO> consultarSaldo(@PathVariable Long idConta) {
         SaldoDTO saldo = contaService.consultarSaldo(idConta);
         return ResponseEntity.ok(saldo);

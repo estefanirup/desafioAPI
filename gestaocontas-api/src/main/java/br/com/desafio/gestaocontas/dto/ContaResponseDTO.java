@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
-public class ContaResponseDTO {
+public class ContaResponseDTO { // Dados que a API devolve para o cliente (só os que ele precisa saber)
     private Long idConta;
     private Long idPessoa;
     private String nomePessoa; 

@@ -9,10 +9,12 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponseDTO {
+public class ErrorResponseDTO { // Objeto p/ padronizar tudo
     private OffsetDateTime timestamp;
     private int status;
     private String error;
     private String message;
     private String path;
 }
+
+// Essas mensagens de erro são tratadas no GlobalExceptionHandler
