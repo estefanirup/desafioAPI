@@ -25,7 +25,7 @@ function Layout() {
             >
                 <Toolbar /> {/* Espaçador para o conteúdo não ficar por baixo da AppBar */}
                 <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                    <Outlet /> {/* As nossas páginas (ListaPessoas, DetalhesCliente) serão renderizadas aqui */}
+                    <Outlet /> {/* Onde as páginas são renderizadas*/}
                 </Container>
             </Box>
         </Box>

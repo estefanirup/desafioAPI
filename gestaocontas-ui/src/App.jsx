@@ -4,9 +4,9 @@ import Layout from './components/Layout';
 import ListaPessoas from './pages/ListaPessoas';
 import DetalhesCliente from './pages/DetalhesCliente';
 
-function App() {
+function App() { // Rotas principais da aplicação 
   return (
-    <Router>
+    <Router> 
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<ListaPessoas />} />

@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 
 function ListaPessoas() {
+    // Navegação, estados e funções principais
     const navigate = useNavigate();
     const [pessoas, setPessoas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ function ListaPessoas() {
         }
     }, []);
 
+    // Hook 
     useEffect(() => { fetchPessoas(); }, [fetchPessoas]);
 
     const handleFormSuccess = () => {

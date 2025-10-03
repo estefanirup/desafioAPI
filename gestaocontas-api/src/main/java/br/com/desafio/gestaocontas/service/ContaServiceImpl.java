@@ -3,8 +3,10 @@ package br.com.desafio.gestaocontas.service;
 import br.com.desafio.gestaocontas.dto.*;
 import br.com.desafio.gestaocontas.exception.IllegalOperationException;
 import br.com.desafio.gestaocontas.exception.ResourceNotFoundException;
+// Mappers injetados
 import br.com.desafio.gestaocontas.mapper.ContaMapper;
 import br.com.desafio.gestaocontas.mapper.TransacaoMapper;
+
 import br.com.desafio.gestaocontas.model.Conta;
 import br.com.desafio.gestaocontas.model.Pessoa;
 import br.com.desafio.gestaocontas.model.Transacao;
@@ -58,7 +60,7 @@ public class ContaServiceImpl implements ContaService {
         novaConta.setDataCriacao(OffsetDateTime.now(ZoneOffset.UTC));
 
         Conta contaSalva = contaRepository.save(novaConta);
-        return contaMapper.toResponseDTO(contaSalva);
+        return contaMapper.toResponseDTO(contaSalva); // Converte a entidade para DTO
     }
 
     @Override
@@ -154,7 +156,7 @@ public class ContaServiceImpl implements ContaService {
     }
 
     @Override
-    @Transactional
+    @Transactional // Garantir que transação seja executada inteira
     public void transferir(Long idContaOrigem, TransferenciaRequestDTO transferenciaDTO) {
         Long idContaDestino = transferenciaDTO.getIdContaDestino();
         BigDecimal valor = transferenciaDTO.getValor();

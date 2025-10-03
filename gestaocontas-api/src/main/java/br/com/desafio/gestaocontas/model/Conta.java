@@ -5,15 +5,15 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-@Data
+@Data // Lombok 
 @Entity
-@Table(name = "tb_conta")
+@Table(name = "tb_conta") // JPA para mapear a classe para a tabela
 public class Conta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_conta")
-    private Long idConta;
+    private Long idConta; // camelCase x snake_case
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pessoa", nullable = false)

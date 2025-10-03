@@ -19,6 +19,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
     List<Transacao> findByConta_IdContaAndDataTransacaoBetweenOrderByDataTransacaoDesc(Long idConta, OffsetDateTime inicio, OffsetDateTime fim);
 
+    // Filtara por saques (valor negativo) e somar os valores
     @Query("SELECT SUM(t.valor * -1) FROM Transacao t WHERE t.conta.idConta = :idConta AND t.valor < 0 AND t.dataTransacao BETWEEN :inicio AND :fim")
     BigDecimal sumSaquesByContaAndData(@Param("idConta") Long idConta, @Param("inicio") OffsetDateTime inicio, @Param("fim") OffsetDateTime fim);
 

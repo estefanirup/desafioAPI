@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Configuração do cliente Axios
 const apiClient = axios.create({
   baseURL: 'http://localhost:8080',
   headers: {
@@ -7,7 +8,7 @@ const apiClient = axios.create({
   },
 });
 
-// Funções para Pessoas
+// Funções para Pessoas e correspondentes endpoints
 export const getPessoas = () => apiClient.get('/pessoas');
 export const getPessoaById = (id) => apiClient.get(`/pessoas/${id}`);
 export const createPessoa = (pessoaData) => apiClient.post('/pessoas', pessoaData);

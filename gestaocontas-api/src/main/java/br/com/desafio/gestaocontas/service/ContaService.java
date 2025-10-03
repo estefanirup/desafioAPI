@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ContaService {
 
+    // Metodos não manipulam a entidade, sim o DTO 
     ContaResponseDTO criarConta(ContaRequestDTO contaRequestDTO);
 
     SaldoDTO consultarSaldo(Long idConta);

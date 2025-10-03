@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice
+@RestControllerAdvice // Intercepta exceções globalmente
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)

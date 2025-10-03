@@ -7,10 +7,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data // Gera getters, setters, toString, equals, hashCode
+@Data // Lombok
 // Request é para os dados que o cliente manda
 public class ContaRequestDTO {
 
+    // Jakarta Validation para facilitar
     @NotNull(message = "O ID da pessoa é obrigatório.")
     private Long idPessoa; // Só os dados que o usuário envia
 
